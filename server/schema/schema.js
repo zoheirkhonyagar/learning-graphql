@@ -11,22 +11,6 @@ const {
   GraphQLID
 } = require("graphql");
 
-// dummy data
-const books = [
-  { name: "book1", genre: "Fantasy", id: "1", authorId: "1" },
-  { name: "book2", genre: "Fantasy", id: "2", authorId: "2" },
-  { name: "book3", genre: "Science", id: "3", authorId: "3" },
-  { name: "book4", genre: "Computer", id: "4", authorId: "2" },
-  { name: "book5", genre: "Art", id: "5", authorId: "3" },
-  { name: "book6", genre: "Science", id: "6", authorId: "3" }
-];
-
-const authors = [
-  { name: "author1", age: 50, id: "1" },
-  { name: "author2", age: 35, id: "2" },
-  { name: "author3", age: 40, id: "3" }
-];
-
 // define authors type
 const AuthorType = new GraphQLObjectType({
   name: "Author",
@@ -37,7 +21,9 @@ const AuthorType = new GraphQLObjectType({
     books: {
       type: new GraphQLList(BookType),
       resolve(parent, args) {
-        return _.filter(books, { authorId: parent.id });
+        return Book.find({
+          authorId: parent.id
+        });
       }
     }
   })
@@ -53,7 +39,7 @@ const BookType = new GraphQLObjectType({
     author: {
       type: AuthorType,
       resolve(parent, args) {
-        return _.find(authors, { id: parent.authorId });
+        return Author.findById(parent.authorId);
       }
     }
   })
@@ -68,7 +54,7 @@ const RootQuery = new GraphQLObjectType({
         id: { type: GraphQLID }
       },
       resolve(parent, args) {
-        return _.find(books, { id: args.id });
+        return Book.findById(args.id);
       }
     },
     author: {
@@ -77,19 +63,19 @@ const RootQuery = new GraphQLObjectType({
         id: { type: GraphQLID }
       },
       resolve(parent, args) {
-        return _.find(authors, { id: args.id });
+        return Author.findById(args.id);
       }
     },
     books: {
       type: GraphQLList(BookType),
       resolve(parent, args) {
-        return books;
+        return Book.find();
       }
     },
     authors: {
       type: GraphQLList(AuthorType),
       resolve(parent, args) {
-        return authors;
+        return Author.find();
       }
     }
   }
