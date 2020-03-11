@@ -1,3 +1,7 @@
+const _ = require("lodash");
+const Book = require("./../models/book");
+const Author = require("./../models/author");
+
 const {
   GraphQLObjectType,
   GraphQLSchema,
@@ -6,7 +10,6 @@ const {
   GraphQLInt,
   GraphQLID
 } = require("graphql");
-const _ = require("lodash");
 
 // dummy data
 const books = [
@@ -65,8 +68,6 @@ const RootQuery = new GraphQLObjectType({
         id: { type: GraphQLID }
       },
       resolve(parent, args) {
-        // code to get data from db / other source
-        // for relationships
         return _.find(books, { id: args.id });
       }
     },
@@ -94,6 +95,32 @@ const RootQuery = new GraphQLObjectType({
   }
 });
 
+const Mutation = new GraphQLObjectType({
+  name: "Mutation",
+  fields: {
+    addAuthor: {
+      type: AuthorType,
+      args: {
+        name: { type: GraphQLString },
+        age: { type: GraphQLInt }
+      },
+      resolve(parent, args) {
+        //execute args
+        const { name, age } = args;
+
+        // create author
+        let author = new Author({
+          name,
+          age
+        });
+
+        // save to db
+        author.save();
+      }
+    }
+  }
+});
+
 module.exports = {
-  schema: new GraphQLSchema({ query: RootQuery })
+  schema: new GraphQLSchema({ query: RootQuery, mutation: Mutation })
 };
