@@ -1,10 +1,14 @@
 const express = require("express");
+const cors = require("cors");
 const graphqlHTTP = require("express-graphql");
 const { schema } = require("./schema/schema");
 const mongoose = require("mongoose");
 
 // initial app
 var app = express();
+
+// add cors middleware
+app.use(cors());
 
 // connect mongoose to mongodb
 mongoose.connect("mongodb://localhost/learn-graphql");
