@@ -1,6 +1,6 @@
-import React from "react";
+import React, { Component } from "react";
 import { gql } from "apollo-boost";
-import { useQuery } from "@apollo/react-hooks";
+import { Query } from "react-apollo";
 
 const getBooksQuery = gql`
   {
@@ -11,22 +11,30 @@ const getBooksQuery = gql`
   }
 `;
 
-function BookList() {
-  const { loading, error, data } = useQuery(getBooksQuery);
+class BookList extends Component {
+  displayBooks() {
+    return (
+      <Query query={getBooksQuery}>
+        {({ loading, error, data }) => {
+          if (loading) return <div>loading</div>;
 
-  if (loading) return <p>Loading...</p>;
-  if (error) {
-    console.log(error);
-    return <p>Error :(</p>;
+          if (error) return <div>error</div>;
+
+          return data.books.map(book => {
+            return <li key={book.id}>{book.name}</li>;
+          });
+        }}
+      </Query>
+    );
   }
-  console.log(data.books);
-  return (
-    <div>
-      <ul id="book-list">
-        <li>book list</li>
-      </ul>
-    </div>
-  );
+
+  render() {
+    return (
+      <div>
+        <ul id="book-list">{this.displayBooks()}</ul>
+      </div>
+    );
+  }
 }
 
 export default BookList;
