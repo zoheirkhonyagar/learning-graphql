@@ -4,6 +4,7 @@ import { ApolloProvider } from "@apollo/react-hooks";
 
 // components
 import BookList from "./components/BookList";
+import AddBook from "./components/AddBook";
 
 // setup apollo client
 const client = new ApolloClient({
@@ -16,6 +17,7 @@ function App() {
       <div className="main">
         <h1>GraphQL book project</h1>
         <BookList />
+        <AddBook />
       </div>
     </ApolloProvider>
   );
