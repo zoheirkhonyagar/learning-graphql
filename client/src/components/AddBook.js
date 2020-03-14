@@ -2,7 +2,11 @@ import React, { useState } from "react";
 import { useQuery, useMutation } from "react-apollo";
 
 // load queries
-import { getAuthorsQuery, addBookMutation } from "./../queries/queries";
+import {
+  getAuthorsQuery,
+  addBookMutation,
+  getBooksQuery
+} from "./../queries/queries";
 
 const AddBook = props => {
   const [state, setState] = useState({
@@ -32,7 +36,10 @@ const AddBook = props => {
   const formSubmitHandler = e => {
     e.preventDefault();
     const { name, genre, authorId } = state;
-    addBook({ variables: { name, genre, authorId } }).then(reslut => {
+    addBook({
+      variables: { name, genre, authorId },
+      refetchQueries: [{ query: getBooksQuery }]
+    }).then(reslut => {
       console.log(reslut);
     });
   };
